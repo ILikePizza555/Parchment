@@ -25,7 +25,7 @@
     <div class="dropdown dropdown-end">
         <button tabindex="0" class="btn btn-ghost">Login</button>
         <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-        <div tabindex="0" class="dropdown-content card card-compact shadow mt-3 p-2">
+        <div tabindex="0" class="dropdown-content card card-compact shadow mt-3 p-2 bg-base-100 border">
             <form method="POST" action="/login" class="flex-col">
                 <label class="input-group mb-2">
                     <span>Email</span>
