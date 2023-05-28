@@ -5,7 +5,7 @@
 
 <div class="sm:container sm:mx-auto">
     <header class="sm:my-4">
-        <nav class="navbar sm:rounded-box sm:border border-b shadow-sm bg-base-100">
+        <nav class="navbar sm:rounded-box sm:border border-b shadow-md bg-base-100">
             <div class="flex-grow">
                 <a class="btn btn-ghost" href="/">
                     <h1 class="normal-case text-lg font-semibold">Parchment</h1>
