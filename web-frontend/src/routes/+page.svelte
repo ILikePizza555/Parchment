@@ -3,7 +3,7 @@
     import type { PageData } from "./$types";
     import debug from "debug";
 	import { onDestroy } from "svelte";
-	import type { PostRecord } from "./types";
+	import type { PostRecord } from "$lib/types";
 	import Post from "../components/Post.svelte";
 
     export let data: PageData;
@@ -31,7 +31,11 @@
 
 {#each items as post (post.id)}
     {console.log(post), ""}
-    <Post title={post.title} content={post.content} created={new Date(post.created)} />
+    <Post title={post.title}
+          content={post.content}
+          created={new Date(post.created)}
+          poster={post.expand.original_poster}
+          tags={post.expand.tags}/>
 {:else}
     <div class="alert alert-info">No posts yet.</div>
 {/each}
