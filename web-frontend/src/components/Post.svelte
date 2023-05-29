@@ -10,8 +10,8 @@
 </script>
 
 <div class="my-12">
-    <article class="prose mx-auto border shadow-md rounded-box divide-y [&>*]:p-4">
-        <header class="flex">
+    <article class="prose mx-auto border shadow-md rounded-box divide-y [&>*]:p-4 overflow-clip">
+        <header class="flex bg-orange-100 dark:bg-slate-800">
             <div class="avatar">
                 <div class="w-14 rounded-md">
                     <img class="m-0" src={poster.avatar || "https://placehold.co/48x48" } alt="User Avatar"/>
@@ -28,7 +28,7 @@
             {/if}
             {@html content}
         </div>
-        <footer>
+        <footer class="bg-orange-100 dark:bg-slate-800">
             {#each tags as tag}
                 <span>#{tag.name}</span>
             {/each}
