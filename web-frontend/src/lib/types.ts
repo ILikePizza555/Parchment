@@ -1,18 +1,21 @@
 import { Record as PBRecord } from "pocketbase";
 
-type JsonObject = { [key: string]: string };
+export type ExpandProp<E> = Record<keyof E, PBRecord | Array<PBRecord>>;
 
-export class PostRecord<E extends Record<keyof E, PBRecord | Array<PBRecord>>> extends PBRecord {
+export class ExpandRecord<E extends ExpandProp<E> = {}> extends PBRecord {
+    declare expand: E;
+}
+
+export class PostRecord<E extends ExpandProp<E> = {}> extends ExpandRecord<E>  {
     declare title:     string;
     declare content:   string;
-    declare expand:    E; // Don't override the `expand` type, just allow constraining it.
 
     get createdDate(): Date {
         return new Date(this.created);
     }
 }
 
-export interface UserRecord extends PBRecord {
+export interface UserRecord<E extends ExpandProp<E> = {}> extends PBRecord {
     username:  string;
     email:     string;
     avatar:    string;
