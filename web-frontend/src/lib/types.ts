@@ -1,12 +1,8 @@
-import { Record } from "pocketbase";
+import { Record as PBRecord } from "pocketbase";
 
 type JsonObject = { [key: string]: string };
 
-export interface RecordExpand {
-    [key: string]: Record | Array<Record>
-}
-
-export class PostRecord<E extends RecordExpand = {}> extends Record {
+export class PostRecord<E extends Record<keyof E, PBRecord | Array<PBRecord>>> extends PBRecord {
     declare title:     string;
     declare content:   string;
     declare expand:    E; // Don't override the `expand` type, just allow constraining it.
@@ -16,7 +12,7 @@ export class PostRecord<E extends RecordExpand = {}> extends Record {
     }
 }
 
-export interface UserRecord extends Record {
+export interface UserRecord extends PBRecord {
     username:  string;
     email:     string;
     avatar:    string;
