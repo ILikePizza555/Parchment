@@ -42,9 +42,7 @@ function buildUrl(path: string, params?: BaseQueryParams): URL {
             const value = params[key];
 
             if (Array.isArray(value)) {
-                for (const v of value) {
-                    url.searchParams.append(key, v);
-                }
+                url.searchParams.append(key, value.join(","));
             } else if (value instanceof Date) {
                 url.searchParams.append(key, value.toISOString());
             } else if (typeof value !== null && typeof value === "object") {
