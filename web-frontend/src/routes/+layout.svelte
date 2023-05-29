@@ -4,7 +4,7 @@
 </script>
 
 <div class="sm:container sm:mx-auto">
-    <header class="sm:mt-4 mb-8">
+    <header class="sm:mt-4 mb-8 sticky top-0 z-50">
         <nav class="navbar sm:rounded-box sm:border border-b shadow-lg bg-base-100">
             <div class="flex-grow">
                 <a class="btn btn-ghost" href="/">
