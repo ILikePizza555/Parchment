@@ -1,11 +1,10 @@
 import { getList, pb } from "$lib/pocketbase";
-import type { Record } from "pocketbase";
 import type { PageLoad } from './$types';
-import { PostRecord, type UserRecord } from "$lib/types";
+import { PostRecord, type UserRecord, type TagRecord } from "$lib/types";
 
 interface PostRecordExpands {
     original_poster: UserRecord,
-    tags: Record[]
+    tags: TagRecord[]
 }
 
 export const load = (async ({fetch}) => {

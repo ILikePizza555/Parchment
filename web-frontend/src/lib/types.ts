@@ -15,8 +15,12 @@ export class PostRecord<E extends ExpandProp<E> = {}> extends ExpandRecord<E>  {
     }
 }
 
-export interface UserRecord<E extends ExpandProp<E> = {}> extends PBRecord {
+export interface UserRecord<E extends ExpandProp<E> = {}> extends ExpandRecord<E> {
     username:  string;
     email:     string;
     avatar:    string;
+}
+
+export interface TagRecord<E extends ExpandProp<E> = {}> extends ExpandRecord<E> {
+    name: string;
 }
