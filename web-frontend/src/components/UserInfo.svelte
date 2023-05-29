@@ -13,7 +13,7 @@
             </div>
         </button>
         <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-        <ul tabindex="0" class="dropdown-content menu menu-compact bg-base-100 rounded-box shadow-md mt-3 p-2">
+        <ul tabindex="0" class="dropdown-content menu menu-compact bg-base-100 rounded-box shadow-lg mt-3 p-2">
             <li>
                 <form method="POST" action="/logout">
                     <button type="submit">Logout</button>
@@ -25,7 +25,7 @@
     <div class="dropdown dropdown-end">
         <button tabindex="0" class="btn btn-ghost">Login</button>
         <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-        <div tabindex="0" class="dropdown-content card card-compact shadow-md mt-3 p-2 bg-base-100 border">
+        <div tabindex="0" class="dropdown-content card card-compact shadow-lg mt-3 p-2 bg-base-100 border">
             <form method="POST" action="/login" class="flex-col">
                 <label class="input-group mb-2">
                     <span>Email</span>

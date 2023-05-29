@@ -4,11 +4,11 @@
 </script>
 
 <div class="sm:container sm:mx-auto">
-    <header class="sm:my-4">
-        <nav class="navbar sm:rounded-box sm:border border-b shadow-md bg-base-100">
+    <header class="sm:mt-4 mb-8">
+        <nav class="navbar sm:rounded-box sm:border border-b shadow-lg bg-base-100">
             <div class="flex-grow">
                 <a class="btn btn-ghost" href="/">
-                    <h1 class="normal-case text-lg font-semibold">Parchment</h1>
+                    <h1 class="normal-case text-xl font-semibold">Parchment</h1>
                 </a>
             </div>
             <div class="flex-shrink">

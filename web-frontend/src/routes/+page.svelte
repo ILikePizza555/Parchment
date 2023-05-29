@@ -4,6 +4,7 @@
     import debug from "debug";
 	import { onDestroy } from "svelte";
 	import type { PostRecord } from "./types";
+	import Post from "../components/Post.svelte";
 
     export let data: PageData;
     let {postsIndex, items} = data;
@@ -29,12 +30,8 @@
 </script>
 
 {#each items as post (post.id)}
-    <div>
-        <article class="prose mx-auto">
-            <h1>{post.title}</h1>
-            {@html post.content}
-        </article>
-    </div>
+    {console.log(post), ""}
+    <Post title={post.title} content={post.content} created={new Date(post.created)} />
 {:else}
     <div class="alert alert-info">No posts yet.</div>
 {/each}
