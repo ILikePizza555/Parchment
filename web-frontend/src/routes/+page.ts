@@ -16,8 +16,25 @@ export const load = (async ({fetch}) => {
         30,
         { expand: ["original_poster", "tags" ] });
 
+    const postsIndex = new Map<string, number>();
+    const postUsers = new Map<string, UserRecord>();
+    const tagInfo = new Map<string, TagRecord>();
+
+    for (const [i, post] of result.items.entries()) {
+        postsIndex.set(post.id, i);
+
+        const {original_poster: op, tags} = post.expand;
+        postUsers.set(op.id, op);
+
+        for (const tag of tags) {
+            tagInfo.set(tag.id, tag)
+        }
+    }
+
     return {
-        postsIndex: new Map(result.items.map((v, i) => [v.id, i])),
+        postsIndex,
+        postUsers,
+        tagInfo,
         ...result
     };   
 
