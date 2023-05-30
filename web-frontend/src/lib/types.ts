@@ -7,8 +7,10 @@ export class ExpandRecord<E extends ExpandProp<E> = {}> extends PBRecord {
 }
 
 export class PostRecord<E extends ExpandProp<E> = {}> extends ExpandRecord<E>  {
-    declare title:     string;
-    declare content:   string;
+    declare title:              string;
+    declare content:            string;
+    declare original_poster:    string;
+    declare tags:               string[];
 
     get createdDate(): Date {
         return new Date(this.created);
