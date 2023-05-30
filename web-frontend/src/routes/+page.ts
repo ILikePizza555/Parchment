@@ -31,11 +31,19 @@ export const load = (async ({fetch}) => {
         }
     }
 
+    // Empty the expand property from `result.items` to be compatible with Realtime
+    // And to clear redundant data.
+    const items = result.items.map(v => {
+        (v as PostRecord).expand = {};
+        return v as PostRecord;
+    })
+
     return {
         postsIndex,
         postUsers,
         tagInfo,
-        ...result
+        ...result,
+        items
     };   
 
 }) satisfies PageLoad;
