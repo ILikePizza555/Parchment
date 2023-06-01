@@ -3,15 +3,19 @@ export type ValueOf<T> = T extends { [Property in keyof T]: infer V } ? V : neve
 /** Like keyof, but only selects keys with a matching type. */
 export type TypedKeyOf<T, K> = {[X in keyof T]-?: T[X] extends K ? X : never}[keyof T];
 
+export type Iteratee<T, V> = ((obj: T) => V) | TypedKeyOf<T, V>;
+export type ComparatorIteratee<T> = Iteratee<T, -1 | 0 | 1>;
+
 /**
  * Performs a binary search on a sorted array to find the index of where the item should be inserted in the array in order to
  * maintain the sort. 
  * @param sortedArray A sorted array. 
  * @param itemToInsert The item to be inserted into the array.
- * @param iteratee A function that takes an item from the array and returns a comparable value. 
+ * @param iteratee Either a function that takes an item from the array and returns a comparable value, or a key in the object whose value is used for comparison.
  * @returns A number in the range [0, sortedArray.length].
  */
-export function findInsertIndexBy<T, V>(sortedArray: ArrayLike<T>, itemToInsert: T, iteratee: ((obj: T) => V) | TypedKeyOf<T, V>): number {
+export function findInsertIndexBy<T>(sortedArray: ArrayLike<T>, itemToInsert: T, iteratee: ComparatorIteratee<T>): number;
+export function findInsertIndexBy<T, V>(sortedArray: ArrayLike<T>, itemToInsert: T, iteratee: Iteratee<T, V>): number {
     if (typeof iteratee !== "function") {
         const key = iteratee;
         // Replace iteratee with key function.
