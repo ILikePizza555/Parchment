@@ -18,27 +18,26 @@ export function normalizeIteratee<T, V>(iteratee: Iteratee<T, V>): (o: T) => V {
 }
 
 /**
- * Performs a binary search on a sorted array to find the index of where the item should be inserted in the array in order to
- * maintain the sort. 
+ * Performs a binary search on a sorted array to find the index the item, or where the item should be inserted to maintain the sorted property.
  * @param sortedArray A sorted array. 
  * @param itemToInsert The item to be inserted into the array.
  * @param iteratee Either a function that takes an item from the array and returns a comparable value, or a key in the object whose value is used for comparison.
  * @returns A number in the range [0, sortedArray.length].
  */
-export function findInsertIndexBy<T, V>(sortedArray: ArrayLike<T>, itemToInsert: T, iteratee: Iteratee<T, V>): number {
+export function binarySearch<T, V>(sortedArray: ArrayLike<T>, itemToInsert: T, iteratee: Iteratee<T, V>): number {
     iteratee = normalizeIteratee(iteratee);
     
     const value = iteratee(itemToInsert);
     let low = 0, high = sortedArray.length - 1;
 
     while (low < high) {
-        const mid = Math.floor((high - low) / 2),
+        const mid = Math.floor((high + low) / 2),
               computed = iteratee(sortedArray[mid]);
         
         if (computed < value) {
-            low = mid;
+            low = mid + 1;
         } else {
-            high = mid;
+            high = mid - 1;
         }
     }
 
