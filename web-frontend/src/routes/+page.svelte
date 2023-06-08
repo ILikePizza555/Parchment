@@ -1,37 +1,37 @@
 <script lang="ts">
     import { pb } from "$lib/pocketbase";
     import type { PageData } from "./$types";
-    import debug from "debug";
-	import { onDestroy, onMount } from "svelte";
+	import { onMount } from "svelte";
 	import { PostRecord, type TagRecord, type UserRecord } from "$lib/types";
 	import Post from "../components/Post.svelte";
 	import type { Record, RecordSubscription } from "pocketbase";
 
     export let data: PageData;
-    let {postsIndex, items, postUsers, tagInfo} = data;
+    let {postCollection, userCollection, tagCollection} = data;
+    let postArray = [...postCollection.values()]; // I don't like this but svelte only lets you iterate over ArrayLikes
 
-    const log = debug("app:routes:page");
     const USER_COLLECTION_KEY = "users";
     const POST_COLLECTION_KEY = "posts";
     const TAG_COLLECTION_KEY = "tags";
 
-    async function fetchPoster(p: PostRecord): Promise<UserRecord> {
-        let poster = postUsers.get(p.original_poster);
+    /** Gets the user specified in the post. If it's not stored locally, get it from the database.  */
+    async function fetchUser(p: PostRecord): Promise<UserRecord> {
+        let user = userCollection.get(p.original_poster);
 
-        if (!poster) {
-            poster = await pb.collection(USER_COLLECTION_KEY).getOne<UserRecord>(p.original_poster);
-            postUsers.set(poster.id, poster);
+        if (!user) {
+            user = await pb.collection(USER_COLLECTION_KEY).getOne<UserRecord>(p.original_poster);
+            userCollection.set(user.id, user);
         }
 
-        return poster;
+        return user;
     }
 
     async function fetchTag(tagId: string): Promise<TagRecord> {
-        let tag = tagInfo.get(tagId);
+        let tag = tagCollection.get(tagId);
 
         if (!tag) {
             tag = await pb.collection(TAG_COLLECTION_KEY).getOne<TagRecord>(tagId);
-            tagInfo.set(tagId, tag);
+            tagCollection.set(tagId, tag);
         }
 
         return tag;
@@ -44,15 +44,15 @@
         const record: PostRecord = Object.setPrototypeOf(e.record, PostRecord);
 
         if (e.action === "create") {
-            items = [...items, record];
-            postsIndex.set(record.id, items.length - 1);
+            postCollection.set(record.id, record)
 
-            fetchPoster(record);
+            // Ensure the user is in the local store
+            fetchUser(record);
             fetchTags(record);
         } else if (e.action === "update") {
-
+            postCollection.setOverride(record.id, record);
         } else if (e.action === "delete") {
-
+            postCollection.delete(record.id);
         }
     }
 
@@ -67,11 +67,11 @@
     });
 </script>
 
-{#each items as post (post.id)}
+{#each postArray as post (post.id)}
     <Post title={post.title}
           content={post.content}
           created={new Date(post.created)}
-          poster={fetchPoster(post)}
+          poster={fetchUser(post)}
           tags={fetchTags(post)}/>
 {:else}
     <div class="alert alert-info">No posts yet.</div>

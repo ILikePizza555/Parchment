@@ -1,6 +1,7 @@
 import { getList, pb } from "$lib/pocketbase";
 import type { PageLoad } from './$types';
 import { PostRecord, type UserRecord, type TagRecord } from "$lib/types";
+import SortedMap from "$lib/SortedMap";
 
 interface PostRecordExpands {
     original_poster: UserRecord,
@@ -16,34 +17,28 @@ export const load = (async ({fetch}) => {
         30,
         { expand: ["original_poster", "tags" ] });
 
-    const postsIndex = new Map<string, number>();
-    const postUsers = new Map<string, UserRecord>();
-    const tagInfo = new Map<string, TagRecord>();
+    const postCollection = new SortedMap<string, PostRecord, Date>((post) => post.createdDate);
+    const userCollection = new Map<string, UserRecord>();
+    const tagCollection = new Map<string, TagRecord>();
 
-    for (const [i, post] of result.items.entries()) {
-        postsIndex.set(post.id, i);
-
-        const {original_poster: op, tags} = post.expand;
-        postUsers.set(op.id, op);
-
+    for (const post of result.items.values()) {
+        const {original_poster: user, tags} = post.expand;
+        postCollection.set(post.id, post);
+        userCollection.set(user.id, user);
+        
         for (const tag of tags) {
-            tagInfo.set(tag.id, tag)
+            tagCollection.set(tag.id, tag);
         }
     }
 
-    // Empty the expand property from `result.items` to be compatible with Realtime
-    // And to clear redundant data.
-    const items = result.items.map(v => {
-        (v as PostRecord).expand = {};
-        return v as PostRecord;
-    })
-
     return {
-        postsIndex,
-        postUsers,
-        tagInfo,
-        ...result,
-        items
-    };   
+        postCollection,
+        userCollection,
+        tagCollection,
+        page: result.page,
+        perPage: result.perPage,
+        totalPages: result.totalPages,
+        totalItems: result.totalItems
+    };
 
 }) satisfies PageLoad;
