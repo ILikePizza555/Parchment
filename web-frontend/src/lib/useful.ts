@@ -28,7 +28,7 @@ export function binarySearch<T, V>(sortedArray: ArrayLike<T>, itemToInsert: T, i
     iteratee = normalizeIteratee(iteratee);
     
     const value = iteratee(itemToInsert);
-    let low = 0, high = sortedArray.length - 1;
+    let low = 0, high = sortedArray.length;
 
     while (low < high) {
         const mid = Math.floor((high + low) / 2),
@@ -37,7 +37,7 @@ export function binarySearch<T, V>(sortedArray: ArrayLike<T>, itemToInsert: T, i
         if (computed < value) {
             low = mid + 1;
         } else {
-            high = mid - 1;
+            high = mid;
         }
     }
 
