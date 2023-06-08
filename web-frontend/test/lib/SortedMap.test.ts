@@ -6,14 +6,14 @@ interface TestObject {
 }
 
 describe("SortedMap", () => {
-    it("can insert items", () => {
+    it("inserts items", () => {
         const sut = new SortedMap<string, TestObject, number>("order");
 
         sut.set("ace", {order: 5});
         expect(sut.get("ace")).toStrictEqual({order: 5})
     });
 
-    it("can insert and override items", () => {
+    it("insert and override items", () => {
         const sut = new SortedMap<string, TestObject, number>("order");
 
         sut.set("ace", {order: 1});
@@ -21,6 +21,25 @@ describe("SortedMap", () => {
 
         sut.setOverride("ace", {order: 5});
         expect(sut.get("ace")!.order).toBe(5);
+    })
+
+    it("re-orders when an item is overriden", () => {
+        const sut = new SortedMap<string, TestObject, number>("order");
+        sut.set("ace", {order: 1});
+        sut.set("bar", {order: 2});
+        sut.set("club", {order: 3});
+        expect([...sut]).toStrictEqual([
+            ["ace", {order: 1}],
+            ["bar", {order: 2}],
+            ["club", {order: 3}]
+        ]);
+
+        sut.setOverride("ace", {order: 5});
+        expect([...sut]).toStrictEqual([
+            ["bar",  {order: 2}],
+            ["club", {order: 3}],
+            ["ace",  {order: 5}]
+        ]);
     })
 
     it("inserts items in the correct order", () => {

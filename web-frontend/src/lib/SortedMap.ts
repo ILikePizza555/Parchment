@@ -89,10 +89,16 @@ export default class SortedMap<K, T, S> implements Map<K, T> {
         return this.entries();
     }
 
+    /**
+     * @returns An iterator over all the keys in the map, in sorted order.
+     */
     public keys(): IterableIterator<K> {
         return this.sortedArray[Symbol.iterator]();
     }
 
+    /**
+     * @returns An iterator over all the values in the map, in sorted order.
+     */
     public values(): IterableIterator<T> {
         const arrayIter = this.sortedArray[Symbol.iterator]();
         const self = this;
@@ -113,6 +119,9 @@ export default class SortedMap<K, T, S> implements Map<K, T> {
         }
     }
 
+    /**
+     * @returns An iterator over all the key value pairs in the map, in sorted order.
+     */
     public entries(): IterableIterator<[K, T]> {
         const arrayIter = this.sortedArray[Symbol.iterator]();
         const self = this;
