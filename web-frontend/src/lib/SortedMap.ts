@@ -66,10 +66,20 @@ export default class SortedMap<T, S, K = string> implements Iterable<T> {
         return true;
     }
 
-    public* [Symbol.iterator](): Generator<T> {
-        for (const key of this.sortedArray) {
-            yield this.get(key)!;
+    public* [Symbol.iterator](): Iterator<T> {
+        const proto = this.sortedArray[Symbol.iterator]();
+        const self = this;
+        const iterator = {
+            next() {
+                const v = super.next();
+                if (v.value) {
+                    v.value = self.get(v.value);
+                }
+                return v;
+            }
         }
+
+        return Object.setPrototypeOf(iterator, proto);
     }
 
     protected _iterateeWrapper(insertKey: K, insertItem: T): (searchKey: K) => S {
