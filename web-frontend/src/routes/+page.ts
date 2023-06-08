@@ -17,7 +17,7 @@ export const load = (async ({fetch}) => {
         30,
         { expand: ["original_poster", "tags" ] });
 
-    const postCollection = new SortedMap<string, PostRecord, Date>((post) => post.createdDate);
+    const postCollection = new SortedMap<string, PostRecord, number>((post) => -post.createdDate);
     const userCollection = new Map<string, UserRecord>();
     const tagCollection = new Map<string, TagRecord>();
 
