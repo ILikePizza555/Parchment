@@ -4,7 +4,7 @@ import { normalizeIteratee, type Iteratee, binarySearch } from "./useful";
  * Defines a data structure that enables lookups in O(1) time, while also preserving a specified order of elements.
  * 
  */
-export default class SortedMap<K, T, S> implements Iterable<T> {
+export default class SortedMap<K, T, S> implements Map<K, T> {
     
     private sortedArray: K[] = [];
     private itemIndex: Map<K, T> = new Map();
@@ -13,6 +13,18 @@ export default class SortedMap<K, T, S> implements Iterable<T> {
 
     constructor(iteratee: Iteratee<T, S>,) {
         this.iteratee = normalizeIteratee(iteratee);
+    }
+
+    public get size(): number {
+        return this.sortedArray.length;
+    }
+
+    public get [Symbol.toStringTag](): string {
+        const kvPairs = this.sortedArray.map(key => {
+            return `${key}: ${this.get(key)}`;
+        });
+
+        return `SortedMap size=${this.size} {${kvPairs.join(", ")}}`;
     }
 
     public insertOverride(key: K, item: T) {
@@ -40,6 +52,11 @@ export default class SortedMap<K, T, S> implements Iterable<T> {
         return this.itemIndex.get(key);
     }
 
+    public set(key: K, item: T): this {
+        this.insertOverride(key, item);
+        return this;
+    }
+
     public has(key: K): boolean {
         return this.itemIndex.has(key);
     }
@@ -58,22 +75,63 @@ export default class SortedMap<K, T, S> implements Iterable<T> {
         return true;
     }
 
-    public [Symbol.iterator](): Iterator<T> {
-        const iter = this.sortedArray[Symbol.iterator]();
+    public clear(): void {
+        this.itemIndex.clear();
+        this.sortedArray.length = 0;
+    }
 
+    public [Symbol.iterator](): IterableIterator<[K, T]> {
+        return this.entries();
+    }
+
+    public keys(): IterableIterator<K> {
+        return this.sortedArray[Symbol.iterator]();
+    }
+
+    public values(): IterableIterator<T> {
+        const arrayIter = this.sortedArray[Symbol.iterator]();
+        const self = this;
         return {
-            next: (...args: [] | [undefined]) => {
-                const iterResult = iter.next();
-
-                if(iterResult.done) {
-                    return iterResult;
+            [Symbol.iterator]() {
+                return this;
+            },
+            next() {
+                const v = arrayIter.next();
+                if (v.done) {
+                    return v;
                 }
-
                 return {
-                    value: this.get(iterResult.value)!,
+                    value: self.get(v.value)!, // `v.value` must exist in the table because it was obtained from the sortedArray
+                    done: false
+                };
+            }
+        }
+    }
+
+    public entries(): IterableIterator<[K, T]> {
+        const arrayIter = this.sortedArray[Symbol.iterator]();
+        const self = this;
+        return {
+            [Symbol.iterator]() {
+                return this;
+            },
+            next() {
+                const v = arrayIter.next();
+                if (v.done) {
+                    return v;
+                }
+                return {
+                    value: [v.value, self.get(v.value)!],
                     done: false
                 }
             }
+        }
+    }
+
+    public forEach(callbackfn: (value: T, key: K, map: SortedMap<K, T, S>) => void, thisArg?: any): void {
+        for (const key of this.sortedArray) {
+            const value = this.get(key)!;
+            callbackfn.call(thisArg, value, key, this);
         }
     }
 
