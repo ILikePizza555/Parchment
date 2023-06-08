@@ -27,34 +27,39 @@ export default class SortedMap<K, T, S> implements Map<K, T> {
         return `SortedMap size=${this.size} {${kvPairs.join(", ")}}`;
     }
 
-    public insertOverride(key: K, item: T) {
-        const insertIndex = binarySearch(this.sortedArray, key, this._iterateeWrapper(key, item));
-
-        if (key !== this.sortedArray[insertIndex]) {
-            // The key is unique, insert normally
-            this._insertItem(insertIndex, key, item);
-        } else {
-            // The key already exists in the array. Just update the map.
-            this.itemIndex.set(key, item);
-        }
+    public get(key: K): T | undefined {
+        return this.itemIndex.get(key);
     }
 
-    public insertDistinct(key: K, item: T) {
+    /**
+     * Inserts a new item with the provided key into the collection.
+     * If the provided key already exists, then an error is thrown.
+     * 
+     * # Remarks
+     * 
+     * Though `Map.set()` in Javascript will override the value, this set does not
+     * as it results in an additional search operation, which may be expensive.
+     * 
+     * @param key 
+     * @param item 
+     * @returns 
+     */
+    public set(key: K, item: T): this {
         if (this.has(key)) {
             throw new Error(`Cannot insert distinct: Item with key "${key}" already exists in collection.`);
         }
 
         const insertIndex = binarySearch(this.sortedArray, key, this._iterateeWrapper(key, item));
         this._insertItem(insertIndex, key, item);
-    }
-
-    public get(key: K): T | undefined {
-        return this.itemIndex.get(key);
-    }
-
-    public set(key: K, item: T): this {
-        this.insertOverride(key, item);
         return this;
+    }
+
+    public setOverride(key: K, item: T): this {
+        if (this.has(key)) {
+            this.delete(key);
+        }
+
+        return this.set(key, item);
     }
 
     public has(key: K): boolean {
