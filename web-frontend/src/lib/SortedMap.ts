@@ -3,26 +3,19 @@ import { normalizeIteratee, type Iteratee, binarySearch } from "./useful";
 /**
  * Defines a data structure that enables lookups in O(1) time, while also preserving a specified order of elements.
  * 
- * SortedMap is instatiated with two functions: `iteratee`, which defines the sort order of the elements, 
- * and `keyFn` which defines the key of the elements.
- * 
- * Note that it is assumed that different objects will have unique keys. That is to say if `keyFn(a) === keyFn(b)`, then `a === b`.
  */
-export default class SortedMap<T, S, K = string> implements Iterable<T> {
+export default class SortedMap<K, T, S> implements Iterable<T> {
     
     private sortedArray: K[] = [];
     private itemIndex: Map<K, T> = new Map();
 
     private iteratee: (o: T) => S;
-    private keyFn: (o: T) => K;
 
-    constructor(iteratee: Iteratee<T, S>, keyFn: Iteratee<T, K>) {
+    constructor(iteratee: Iteratee<T, S>,) {
         this.iteratee = normalizeIteratee(iteratee);
-        this.keyFn = normalizeIteratee(keyFn);
     }
 
-    public insertOverride(item: T) {
-        const key = this.keyFn(item);
+    public insertOverride(key: K, item: T) {
         const insertIndex = binarySearch(this.sortedArray, key, this._iterateeWrapper(key, item));
 
         if (key !== this.sortedArray[insertIndex]) {
@@ -34,8 +27,7 @@ export default class SortedMap<T, S, K = string> implements Iterable<T> {
         }
     }
 
-    public insertDistinct(item: T) {
-        const key = this.keyFn(item);
+    public insertDistinct(key: K, item: T) {
         if (this.has(key)) {
             throw new Error(`Cannot insert distinct: Item with key "${key}" already exists in collection.`);
         }
